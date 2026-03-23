@@ -1,0 +1,39 @@
+# Test backend: uses postgres:16-alpine as a client to run psql and prove DB connectivity.
+# Returns a JSON-like response via a simple nc/shell loop.
+# Replace with your real Java image when ready.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: turinghatch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: hashicorp/http-echo:latest
+          args:
+            - "-listen=:8080"
+            - '-text={"service":"backend","status":"ok","db":"postgres-svc:5432"}'
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5

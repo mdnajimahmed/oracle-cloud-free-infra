@@ -1,0 +1,62 @@
+# Test frontend: nginx serving a simple HTML page that shows the stack is working.
+# Replace with your real React image when ready.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: turinghatch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      initContainers:
+        - name: create-index
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              cat > /usr/share/nginx/html/index.html <<'EOF'
+              <!DOCTYPE html>
+              <html>
+              <head><title>turinghatch.com</title></head>
+              <body>
+                <h1>turinghatch.com</h1>
+                <p>Stack: k3s + Envoy Gateway + React + Java + PostgreSQL</p>
+                <p>Status: <strong>OK</strong></p>
+              </body>
+              </html>
+              EOF
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      containers:
+        - name: frontend
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          emptyDir: {}

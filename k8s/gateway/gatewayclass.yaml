@@ -1,0 +1,8 @@
+# GatewayClass tells the cluster which controller handles Gateway resources.
+# "eg" is the Envoy Gateway controller name (default for Envoy Gateway installs).
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller

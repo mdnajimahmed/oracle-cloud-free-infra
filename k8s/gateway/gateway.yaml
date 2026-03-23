@@ -1,0 +1,47 @@
+# The Gateway resource defines the entry points into the cluster.
+# Envoy Gateway will create an Envoy proxy Deployment + Service for this Gateway.
+#
+# Port 80:  HTTP — used for cert-manager ACME HTTP-01 challenges + HTTP→HTTPS redirect
+# Port 443: HTTPS — TLS terminated here, routes traffic to backend apps
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: main-gateway
+  namespace: envoy-gateway-system
+spec:
+  gatewayClassName: eg
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: https
+      port: 443
+      protocol: HTTPS
+      hostname: "*.turinghatch.com"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: turinghatch-tls
+            namespace: turinghatch
+            kind: Secret
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: https-apex
+      port: 443
+      protocol: HTTPS
+      hostname: "turinghatch.com"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: turinghatch-tls
+            namespace: turinghatch
+            kind: Secret
+      allowedRoutes:
+        namespaces:
+          from: All

@@ -1,0 +1,65 @@
+#cloud-config
+# Bootstrap script for the OCI ARM Ubuntu 22.04 instance.
+# Runs on first boot before any manual scripts.
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - wget
+  - git
+  - vim
+  - htop
+  - iotop
+  - net-tools
+  - unzip
+  - jq
+  - ca-certificates
+  - gnupg
+  - lsb-release
+  - ufw
+  - fail2ban
+
+# ── Firewall setup ────────────────────────────────────────────────────────────
+# OCI Security Lists operate at the subnet level but Ubuntu's ufw also runs.
+# Both must allow the same ports.
+runcmd:
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp comment 'SSH'
+  - ufw allow 80/tcp comment 'HTTP'
+  - ufw allow 443/tcp comment 'HTTPS'
+  - ufw allow 6443/tcp comment 'k3s API'
+  - ufw --force enable
+
+  # ── fail2ban for SSH brute-force protection ──────────────────────────────
+  - systemctl enable fail2ban
+  - systemctl start fail2ban
+
+  # ── Swap (helps with memory pressure on 24GB) ────────────────────────────
+  - fallocate -l 4G /swapfile
+  - chmod 600 /swapfile
+  - mkswap /swapfile
+  - swapon /swapfile
+  - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+  # ── Kernel tuning for k8s ────────────────────────────────────────────────
+  - modprobe br_netfilter
+  - modprobe overlay
+  - |
+    cat > /etc/modules-load.d/k8s.conf <<EOF
+    br_netfilter
+    overlay
+    EOF
+  - |
+    cat > /etc/sysctl.d/99-k8s.conf <<EOF
+    net.bridge.bridge-nf-call-ip6tables = 1
+    net.bridge.bridge-nf-call-iptables  = 1
+    net.ipv4.ip_forward                 = 1
+    fs.inotify.max_user_watches         = 524288
+    fs.inotify.max_user_instances       = 512
+    EOF
+  - sysctl --system
+
+final_message: "Cloud-init complete. Instance is ready for k3s installation."

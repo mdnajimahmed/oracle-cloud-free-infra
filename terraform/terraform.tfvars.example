@@ -1,0 +1,42 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — never commit it.
+
+# ─── OCI Authentication ───────────────────────────────────────────────────────
+# All values found in the OCI Console. See README for step-by-step instructions.
+
+tenancy_ocid     = "ocid1.tenancy.oc1..REPLACE_ME"
+user_ocid        = "ocid1.user.oc1..REPLACE_ME"
+fingerprint      = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+private_key_path = "~/.oci/oci_api_key.pem"
+region           = "us-ashburn-1"  # e.g., ap-singapore-1, eu-frankfurt-1
+
+# ─── Compartment ─────────────────────────────────────────────────────────────
+# Use your tenancy OCID here (root compartment), or create a dedicated one.
+
+compartment_ocid = "ocid1.compartment.oc1..REPLACE_ME"
+
+# ─── Compute ─────────────────────────────────────────────────────────────────
+
+# Availability domain (found in Console → Compute → Create Instance)
+availability_domain = "GrCH:US-ASHBURN-AD-1"  # example — yours will differ
+
+# Ubuntu 22.04 aarch64 image OCID for your region
+# (found in Console → Compute → Create Instance → Change Image → Platform Images → Ubuntu 22.04 aarch64)
+arm_image_ocid = "ocid1.image.oc1.iad.REPLACE_ME"
+
+# Contents of your SSH public key file: cat ~/.ssh/oci_arm_key.pub
+ssh_public_key = "ssh-ed25519 AAAA...REPLACE_ME oci-arm-instance"
+
+# Free tier maximums — change only if you want to use less
+instance_ocpus      = 4
+instance_memory_gbs = 24
+boot_volume_size_gbs = 50
+
+# ─── Networking ──────────────────────────────────────────────────────────────
+
+vcn_cidr    = "10.0.0.0/16"
+subnet_cidr = "10.0.1.0/24"
+
+# Restrict SSH and k8s API access to your IP only (recommended)
+# Find your IP: curl ifconfig.me
+your_home_ip = "0.0.0.0/0"  # Replace with your IP: "1.2.3.4/32"
