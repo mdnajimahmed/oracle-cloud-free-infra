@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+  - httproute.yaml
+  - certificate.yaml
+  - referencegrant.yaml
+images:
+  - name: ivplay4689/turinghatch
+    newTag: ruthless-execution-fe-1.0.0
