@@ -1,4 +1,4 @@
-# Route turinghatch.com/api/* → backend service (path-based, no separate subdomain needed)
+# Route turinghatch.com/ruthless-execution/api/* → backend service, stripping /ruthless-execution prefix
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -15,7 +15,13 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /api
+            value: /ruthless-execution/api
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /api
       backendRefs:
         - name: backend-svc
           port: 80
