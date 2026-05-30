@@ -13,6 +13,8 @@ spec:
           type: StrategicMerge
           value:
             spec:
+              strategy:
+                type: Recreate
               template:
                 spec:
                   hostNetwork: true
