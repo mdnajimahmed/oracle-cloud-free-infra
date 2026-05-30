@@ -36,7 +36,7 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /
+            value: /ruthless-execution
       backendRefs:
         - name: frontend-svc
           port: 80
