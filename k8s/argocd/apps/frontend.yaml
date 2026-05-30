@@ -19,6 +19,15 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: turinghatch
+  ignoreDifferences:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      jsonPointers:
+        - /spec/rules/0/backendRefs/0/group
+        - /spec/rules/0/backendRefs/0/kind
+        - /spec/rules/0/backendRefs/0/weight
+        - /spec/parentRefs/0/group
+        - /spec/parentRefs/0/kind
   syncPolicy:
     automated:
       prune: true
@@ -26,3 +35,4 @@ spec:
     syncOptions:
       - CreateNamespace=false
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
