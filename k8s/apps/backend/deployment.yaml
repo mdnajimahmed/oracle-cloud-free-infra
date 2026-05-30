@@ -19,7 +19,7 @@ spec:
         - name: backend
           image: ivplay4689/turinghatch:ruthless-execution-be-1.0.0
           ports:
-            - containerPort: 80
+            - containerPort: 9559
           env:
             - name: DATABASE_URL
               valueFrom:
@@ -36,12 +36,12 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 9559
             initialDelaySeconds: 15
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 9559
             initialDelaySeconds: 30
             periodSeconds: 20
