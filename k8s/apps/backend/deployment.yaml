@@ -34,14 +34,12 @@ spec:
               memory: "512Mi"
               cpu: "1000m"
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 9559
-            initialDelaySeconds: 15
+            initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 9559
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
             periodSeconds: 20
