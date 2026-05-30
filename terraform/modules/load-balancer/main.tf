@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    oci = {
+      source = "oracle/oci"
+    }
+  }
+}
+
 # Reserved Public IP — free when attached to a running resource
 # This IP never changes, even if you rebuild the VM or the NLB
 resource "oci_core_public_ip" "nlb" {
@@ -17,6 +25,12 @@ resource "oci_network_load_balancer_network_load_balancer" "main" {
 
   reserved_ips {
     id = oci_core_public_ip.nlb.id
+  }
+
+  # OCI terraform provider bug: re-applying clears the reserved IP association.
+  # Prevent terraform from touching reserved_ips after initial creation.
+  lifecycle {
+    ignore_changes = [reserved_ips]
   }
 }
 

@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    oci = {
+      source = "oracle/oci"
+    }
+  }
+}
+
 # Fetch OCI's predefined backup policies
 data "oci_core_volume_backup_policies" "predefined" {}
 

@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    oci = {
+      source = "oracle/oci"
+    }
+  }
+}
+
 resource "oci_core_instance" "arm" {
   compartment_id      = var.compartment_ocid
   availability_domain = var.availability_domain

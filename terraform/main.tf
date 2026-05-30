@@ -29,13 +29,13 @@ module "network" {
 module "compute" {
   source = "./modules/compute"
 
-  compartment_ocid    = var.compartment_ocid
-  availability_domain = var.availability_domain
-  subnet_id           = module.network.subnet_id
-  arm_image_ocid      = var.arm_image_ocid
-  ssh_public_key      = var.ssh_public_key
-  instance_ocpus      = var.instance_ocpus
-  instance_memory_gbs = var.instance_memory_gbs
+  compartment_ocid     = var.compartment_ocid
+  availability_domain  = var.availability_domain
+  subnet_id            = module.network.subnet_id
+  arm_image_ocid       = var.arm_image_ocid
+  ssh_public_key       = var.ssh_public_key
+  instance_ocpus       = var.instance_ocpus
+  instance_memory_gbs  = var.instance_memory_gbs
   boot_volume_size_gbs = var.boot_volume_size_gbs
 }
 
@@ -50,7 +50,7 @@ module "storage" {
 module "load_balancer" {
   source = "./modules/load-balancer"
 
-  compartment_ocid     = var.compartment_ocid
-  subnet_id            = module.network.subnet_id
-  instance_private_ip  = module.compute.instance_private_ip
+  compartment_ocid    = var.compartment_ocid
+  subnet_id           = module.network.subnet_id
+  instance_private_ip = module.compute.instance_private_ip
 }
