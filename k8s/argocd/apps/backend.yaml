@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: backend
+  namespace: argocd
+  annotations:
+    # ArgoCD Image Updater: track ivplay4689/turinghatch, only tags matching *-be-* semver
+    argocd-image-updater.argoproj.io/image-list: app=ivplay4689/turinghatch
+    argocd-image-updater.argoproj.io/app.update-strategy: latest
+    argocd-image-updater.argoproj.io/app.allow-tags: regexp:^.*-be-[0-9]+\.[0-9]+\.[0-9]+$
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mdnajimahmed/oracle-cloud-free-infra.git
+    targetRevision: main
+    path: k8s/apps/backend
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: turinghatch
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

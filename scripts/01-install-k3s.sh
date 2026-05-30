@@ -37,7 +37,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
   --advertise-address ${PRIVATE_IP} \
   --cluster-cidr 10.42.0.0/16 \
   --service-cidr 10.43.0.0/16 \
-  --flannel-iface eth0 \
+  --flannel-iface enp0s6 \
   --default-local-storage-path ${LOCAL_PATH_DIR}" sh -
 
 echo "Waiting for k3s to be ready..."

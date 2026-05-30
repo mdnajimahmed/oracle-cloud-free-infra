@@ -11,7 +11,6 @@ helm version
 
 # Add commonly needed Helm repos
 helm repo add jetstack   https://charts.jetstack.io
-helm repo add envoy-gateway-helm https://gateway.envoyproxy.io/charts
 helm repo update
 
 echo ""

@@ -1,9 +1,3 @@
-# cert-manager Certificate resource.
-# cert-manager will obtain a Let's Encrypt certificate and store it in the
-# Secret named "turinghatch-tls" which the Gateway references for TLS.
-#
-# IMPORTANT: Start with letsencrypt-staging to verify everything works.
-# Then switch to letsencrypt-prod and delete the staging secret to re-issue.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -12,9 +6,8 @@ metadata:
 spec:
   secretName: turinghatch-tls
   issuerRef:
-    name: letsencrypt-staging   # Switch to letsencrypt-prod once tested
+    name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
     - turinghatch.com
     - www.turinghatch.com
-    - api.turinghatch.com

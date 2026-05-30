@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:16-alpine
+          image: postgres:18.4-bookworm
           ports:
             - containerPort: 5432
               name: postgres
@@ -37,10 +37,10 @@ spec:
               value: /var/lib/postgresql/data/pgdata
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
+              memory: "4Gi"
+              cpu: "1000m"
             limits:
-              memory: "2Gi"
+              memory: "4Gi"
               cpu: "1000m"
           volumeMounts:
             - name: postgres-data
@@ -71,4 +71,4 @@ spec:
         storageClassName: local-path   # k3s built-in; data stored at /mnt/app-data/local-path-provisioner
         resources:
           requests:
-            storage: 50Gi
+            storage: 100Gi

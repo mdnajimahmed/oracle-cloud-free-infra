@@ -1,4 +1,4 @@
-# Route api.turinghatch.com → backend service
+# Route turinghatch.com/api/* → backend service (path-based, no separate subdomain needed)
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -8,14 +8,14 @@ spec:
   parentRefs:
     - name: main-gateway
       namespace: envoy-gateway-system
-      sectionName: https
+      sectionName: https-apex
   hostnames:
-    - "api.turinghatch.com"
+    - "turinghatch.com"
   rules:
     - matches:
         - path:
             type: PathPrefix
-            value: /
+            value: /api
       backendRefs:
         - name: backend-svc
-          port: 8080
+          port: 80
