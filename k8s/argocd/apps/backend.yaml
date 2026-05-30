@@ -6,7 +6,7 @@ metadata:
   annotations:
     # ArgoCD Image Updater: track ivplay4689/turinghatch, only tags matching *-be-* semver
     argocd-image-updater.argoproj.io/image-list: app=ivplay4689/turinghatch
-    argocd-image-updater.argoproj.io/app.update-strategy: latest
+    argocd-image-updater.argoproj.io/app.update-strategy: newest-build
     argocd-image-updater.argoproj.io/app.allow-tags: regexp:^.*-be-[0-9]+\.[0-9]+\.[0-9]+$
     argocd-image-updater.argoproj.io/app.kustomize-image-name: ivplay4689/turinghatch
     argocd-image-updater.argoproj.io/write-back-method: argocd
