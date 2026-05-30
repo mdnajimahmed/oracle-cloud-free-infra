@@ -20,12 +20,11 @@ spec:
           image: ivplay4689/turinghatch:ruthless-execution-be-1.0.0
           ports:
             - containerPort: 9559
-          env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secret
-                  key: DATABASE_URL
+          envFrom:
+            - secretRef:
+                name: backend-secret
+            - configMapRef:
+                name: backend-config
           resources:
             requests:
               memory: "256Mi"
