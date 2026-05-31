@@ -37,6 +37,18 @@ spec:
         - path:
             type: PathPrefix
             value: /ruthless-execution
+        - path:
+            type: PathPrefix
+            value: /assets
+        - path:
+            type: Exact
+            value: /favicon.ico
+        - path:
+            type: Exact
+            value: /robots.txt
+        - path:
+            type: Exact
+            value: /placeholder.svg
       backendRefs:
         - name: frontend-svc
           port: 80
