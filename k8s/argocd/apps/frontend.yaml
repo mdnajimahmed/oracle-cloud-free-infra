@@ -15,7 +15,7 @@ spec:
   source:
     repoURL: https://github.com/mdnajimahmed/oracle-cloud-free-infra.git
     targetRevision: main
-    path: k8s/apps/frontend
+    path: k8s/apps/ruthless-execution/frontend
   destination:
     server: https://kubernetes.default.svc
     namespace: ruthless-execution
