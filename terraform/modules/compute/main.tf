@@ -18,15 +18,15 @@ resource "oci_core_instance" "arm" {
   }
 
   source_details {
-    source_type              = "image"
-    source_id                = var.arm_image_ocid
-    boot_volume_size_in_gbs  = var.boot_volume_size_gbs
+    source_type             = "image"
+    source_id               = var.arm_image_ocid
+    boot_volume_size_in_gbs = var.boot_volume_size_gbs
   }
 
   create_vnic_details {
     subnet_id        = var.subnet_id
     display_name     = "primary-vnic"
-    assign_public_ip = true  # Ephemeral IP for SSH during setup; NLB handles production traffic
+    assign_public_ip = false  # Reserved IP managed via oci_core_public_ip.vm below
     hostname_label   = "k3s-node"
   }
 
@@ -36,18 +36,23 @@ resource "oci_core_instance" "arm" {
   }
 
   availability_config {
-    recovery_action = "RESTORE_INSTANCE"  # Auto-restore if OCI reclaims during capacity event
+    recovery_action = "RESTORE_INSTANCE"
   }
 
-  # Prevent accidental replacement — changing this would destroy and recreate the VM
   lifecycle {
     ignore_changes = [
-      source_details[0].source_id,  # Allow image updates without destroying instance
+      source_details[0].source_id,
+      create_vnic_details,  # IP assignment managed separately; prevents instance replacement
     ]
   }
 }
 
-# Fetch the private IP of the instance's primary VNIC
+# ── Reserved Public IP for SSH / kubectl access ───────────────────────────────
+#
+# Always reserved (never ephemeral) so the IP survives reboots and OCI
+# maintenance events. Same pattern as the NLB IP — assigned via
+# oci_core_public_ip.private_ip_id to bypass the OCI provider bug.
+
 data "oci_core_vnic_attachments" "arm" {
   compartment_id = var.compartment_ocid
   instance_id    = oci_core_instance.arm.id
@@ -55,4 +60,17 @@ data "oci_core_vnic_attachments" "arm" {
 
 data "oci_core_vnic" "primary" {
   vnic_id = data.oci_core_vnic_attachments.arm.vnic_attachments[0].vnic_id
+}
+
+data "oci_core_private_ips" "vm_primary" {
+  subnet_id  = var.subnet_id
+  ip_address = data.oci_core_vnic.primary.private_ip_address
+  depends_on = [oci_core_instance.arm]
+}
+
+resource "oci_core_public_ip" "vm" {
+  compartment_id = var.compartment_ocid
+  lifetime       = "RESERVED"
+  display_name   = "vm-reserved-ip"
+  private_ip_id  = data.oci_core_private_ips.vm_primary.private_ips[0].id
 }
