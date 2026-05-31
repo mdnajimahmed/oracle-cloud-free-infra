@@ -37,6 +37,16 @@ spec:
         - path:
             type: PathPrefix
             value: /ruthless-execution
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: frontend-svc
+          port: 80
+    - matches:
         - path:
             type: PathPrefix
             value: /assets
