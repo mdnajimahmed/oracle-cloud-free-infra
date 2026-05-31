@@ -6,4 +6,4 @@ resources:
   - httproute.yaml
 images:
   - name: ivplay4689/turinghatch
-    newTag: ruthless-execution-be-1.0.0
+    newTag: ruthless-execution-be-1.0.1
