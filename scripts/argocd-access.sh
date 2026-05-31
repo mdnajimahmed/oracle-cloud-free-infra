@@ -16,6 +16,7 @@
 set -euo pipefail
 
 OCI_KEY="${OCI_KEY:-$HOME/.ssh/oci_arm_key}"
+OCI_VM_IP="${OCI_VM_IP:-134.185.85.67}"   # VM reserved IP — from: terraform output instance_public_ip
 K8S_TUNNEL_PORT=6443
 ARGOCD_LOCAL_PORT=8080
 KUBECTL_CONTEXT="turinghatch-oci"
@@ -28,14 +29,8 @@ if [[ ! -f "$OCI_KEY" ]]; then
 fi
 
 # ── Gate: VM IP must be provided ──────────────────────────────────────────────
-if [[ -z "${OCI_VM_IP:-}" ]]; then
-  echo "ERROR: OCI_VM_IP is not set."
-  echo "       Get the VM's reserved IP with:"
-  echo "         terraform -chdir=terraform output -raw instance_public_ip"
-  echo "       Then run:"
-  echo "         OCI_VM_IP=<ip> ./scripts/argocd-access.sh"
-  exit 1
-fi
+# OCI_VM_IP has a hardcoded default (the current reserved IP).
+# Override with: OCI_VM_IP=<ip> ./scripts/argocd-access.sh
 
 OCI_HOST="ubuntu@${OCI_VM_IP}"
 
