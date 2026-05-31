@@ -8,6 +8,13 @@ on:
     branches: [main]
     paths: ["terraform/**"]
   workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Run terraform apply after plan?'
+        required: true
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
 
 permissions:
   contents: read
@@ -67,5 +74,7 @@ jobs:
             });
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: |
+          (github.ref == 'refs/heads/main' && github.event_name == 'push') ||
+          (github.event_name == 'workflow_dispatch' && inputs.apply == 'true')
         run: terraform apply -auto-approve tfplan
