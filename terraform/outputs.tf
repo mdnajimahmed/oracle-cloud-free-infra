@@ -15,5 +15,5 @@ output "instance_private_ip" {
 
 output "ssh_command" {
   description = "Ready-to-use SSH command to connect to the instance."
-  value       = "ssh -i ~/.ssh/oci_arm_key ubuntu@${module.compute.instance_public_ip}"
+  value       = module.compute.instance_public_ip != null ? "ssh -i ~/.ssh/oci_arm_key ubuntu@${module.compute.instance_public_ip}" : null
 }

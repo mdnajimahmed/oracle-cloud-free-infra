@@ -3,7 +3,7 @@ output "instance_id" {
 }
 
 output "instance_public_ip" {
-  value = data.oci_core_vnic.primary.public_ip_address
+  value = try(data.oci_core_vnic.primary.public_ip_address, null)
 }
 
 output "instance_private_ip" {
