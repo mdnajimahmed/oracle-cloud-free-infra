@@ -6,29 +6,54 @@ terraform {
   }
 }
 
-# Reserved Public IP — free when attached to a running resource
-# This IP never changes, even if you rebuild the VM or the NLB
+# ── Reserved Public IP ────────────────────────────────────────────────────────
+#
+# The reserved IP is managed HERE (oci_core_public_ip), NOT via the NLB's
+# reserved_ips field. This bypasses a confirmed OCI provider bug (issue #1893)
+# where the NLB Update API clears the IP association on every subsequent apply,
+# even with lifecycle { ignore_changes = [reserved_ips] }.
+#
+# Fix: assign the reserved IP directly to the NLB's private IP OCID via
+# oci_core_public_ip.private_ip_id. The oci_core_public_ip Update API is
+# stable and Terraform enforces the association on every apply.
+
 resource "oci_core_public_ip" "nlb" {
   compartment_id = var.compartment_ocid
   lifetime       = "RESERVED"
   display_name   = "nlb-reserved-ip"
+  private_ip_id  = data.oci_core_private_ips.nlb.private_ips[0].id
+}
+
+# Look up the NLB's private IP OCID after the NLB is created.
+# The NLB gets a private IP in the subnet (e.g. 10.0.1.240); we find its OCID
+# so we can assign the reserved public IP to it via oci_core_public_ip above.
+data "oci_core_private_ips" "nlb" {
+  subnet_id  = var.subnet_id
+  ip_address = local.nlb_private_ip
+  depends_on = [oci_network_load_balancer_network_load_balancer.main]
+}
+
+locals {
+  # Extract the NLB's private (non-public) IP from the ip_addresses list
+  nlb_private_ip = [
+    for ip in oci_network_load_balancer_network_load_balancer.main.ip_addresses :
+    ip.ip_address if !ip.is_public
+  ][0]
 }
 
 # Network Load Balancer (always-free: 1 NLB)
-# NLB operates at L3/L4 (TCP/UDP) — no TLS termination here
-# SSL is terminated downstream at Envoy Gateway
+# NLB operates at L3/L4 (TCP/UDP) — no TLS termination here.
+# SSL is terminated downstream at Envoy Gateway.
+#
+# NOTE: no reserved_ips block here — the public IP is assigned via
+# oci_core_public_ip.private_ip_id above. ignore_changes = [reserved_ips]
+# suppresses drift warnings when OCI auto-populates that field.
 resource "oci_network_load_balancer_network_load_balancer" "main" {
   compartment_id = var.compartment_ocid
   subnet_id      = var.subnet_id
   display_name   = "main-nlb"
   is_private     = false
 
-  reserved_ips {
-    id = oci_core_public_ip.nlb.id
-  }
-
-  # OCI terraform provider bug: re-applying clears the reserved IP association.
-  # Prevent terraform from touching reserved_ips after initial creation.
   lifecycle {
     ignore_changes = [reserved_ips]
   }
