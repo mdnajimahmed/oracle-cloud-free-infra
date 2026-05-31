@@ -18,7 +18,7 @@ spec:
     path: k8s/apps/frontend
   destination:
     server: https://kubernetes.default.svc
-    namespace: turinghatch
+    namespace: ruthless-execution
   ignoreDifferences:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
