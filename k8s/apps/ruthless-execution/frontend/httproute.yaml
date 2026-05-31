@@ -35,30 +35,19 @@ spec:
   rules:
     - matches:
         - path:
-            type: PathPrefix
+            type: Exact
             value: /ruthless-execution
       filters:
-        - type: URLRewrite
-          urlRewrite:
+        - type: RequestRedirect
+          requestRedirect:
             path:
-              type: ReplacePrefixMatch
-              replacePrefixMatch: /
-      backendRefs:
-        - name: frontend-svc
-          port: 80
+              type: ReplaceFullPath
+              replaceFullPath: /ruthless-execution/
+            statusCode: 301
     - matches:
         - path:
             type: PathPrefix
-            value: /assets
-        - path:
-            type: Exact
-            value: /favicon.ico
-        - path:
-            type: Exact
-            value: /robots.txt
-        - path:
-            type: Exact
-            value: /placeholder.svg
+            value: /ruthless-execution/
       backendRefs:
         - name: frontend-svc
           port: 80
