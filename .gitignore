@@ -15,6 +15,9 @@ crash.*.log
 # to change depending on the environment.
 *.tfvars
 *.tfvars.json
+# terraform.tfvars is safe to commit — contains only non-sensitive static config.
+# Secrets are injected via TF_VAR_* environment variables (GitHub Secrets in CI).
+!terraform/terraform.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in

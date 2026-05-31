@@ -15,10 +15,10 @@ variable "fingerprint" {
   type        = string
 }
 
-variable "private_key_path" {
-  description = "Local path to your OCI API private key PEM file."
+variable "private_key" {
+  description = "Contents of your OCI API private key PEM file. Set via TF_VAR_private_key env var."
   type        = string
-  default     = "~/.oci/oci_api_key.pem"
+  sensitive   = true
 }
 
 variable "region" {
