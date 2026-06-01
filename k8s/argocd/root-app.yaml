@@ -9,6 +9,8 @@ spec:
     repoURL: https://github.com/mdnajimahmed/oracle-cloud-free-infra.git
     targetRevision: main
     path: k8s/argocd/apps
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
