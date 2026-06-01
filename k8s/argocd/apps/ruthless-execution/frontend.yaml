@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: frontend
+  name: ruthless-execution-frontend
   namespace: argocd
 spec:
   project: default
