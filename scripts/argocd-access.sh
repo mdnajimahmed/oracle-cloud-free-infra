@@ -74,7 +74,7 @@ fi
 echo "→ Port-forwarding ArgoCD → localhost:$ARGOCD_LOCAL_PORT..."
 pkill -f "kubectl.*port-forward.*argocd-server" 2>/dev/null || true
 sleep 1
-kubectl -n argocd port-forward svc/argocd-server "$ARGOCD_LOCAL_PORT:80" \
+kubectl -n argocd port-forward svc/argocd-server "$ARGOCD_LOCAL_PORT:443" \
   --context "$KUBECTL_CONTEXT" >/dev/null 2>&1 &
 PF_PID=$!
 sleep 2
