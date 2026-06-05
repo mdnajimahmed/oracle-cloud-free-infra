@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ruthless-execution-notifications
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mdnajimahmed/oracle-cloud-free-infra.git
+    targetRevision: main
+    path: k8s/apps/ruthless-execution/notifications
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ruthless-execution
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true
